@@ -22,7 +22,7 @@ app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: false }));
 app.use(
   session({
-    secret: process.env.SECRET,
+    secret: "feedmeseymour",
     resave: false,
     saveUninitialized: false,
   })
