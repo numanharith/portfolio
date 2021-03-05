@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <%- include("./partials/head.ejs") %>
+    <style>
+      .green {
+        color: green;
+      }
+
+      .red {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <h1>
+          <%= currentUser.username %>'s Portfolio
+        </h1 >
+        <form action="/sessions?_method=DELETE" method="POST">
+          <input type="submit" value="Logout" class="btn btn-danger"/>
+        </form>
+        <table class="table table-hover table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Symbol</th>
+              <th scope="col">Shares</th>
+              <th scope="col">Cost</th>
+              <th scope="col">Fees</th>
+              <th scope="col">Current price</th>
+              <th scope="col">Market value</th>
+              <th scope="col">P&L</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let i = 0; i < positions.length; i++) { %>
+              <% 
+                let PnL = (positions[i].currentPrice * positions[i].shares) -
+                (positions[i].avgCost * positions[i].shares + positions[i].fees)
+              %>
+              <tr>
+                <th scope="row"><%= i + 1 %></th>
+                <td><a href="/<%= positions[i]._id %>"><%= positions[i].symbol %></a></td>
+                <td><%= positions[i].shares %></td>
+                <td>$<%= positions[i].avgCost %></td>
+                <td>$<%= positions[i].fees %></td>
+                <td>$<%= positions[i].currentPrice %></td>
+                <td>$<%= positions[i].currentPrice * positions[i].shares%></td>
+                <% if(PnL >= 0) { %>
+                  <td class="green">$<%= PnL %></td>
+                <% } else { %>
+                  <td class="red">$<%= PnL %></td>
+                <% } %> 
+              </tr>
+            <% } %> 
+          </tbody>
+          <tfoot>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <% let totalMV = 0; %> 
+            <% let totalPnL = 0; %> 
+            <% for (let i = 0; i < positions.length; i++) { %>
+              <% totalMV += positions[i].currentPrice * positions[i].shares; %>
+              <% 
+                totalPnL += (positions[i].currentPrice * positions[i].shares) -
+                (positions[i].avgCost * positions[i].shares + positions[i].fees)
+              %>
+            <% } %>
+            <td style="font-weight: bold;">$<%= totalMV %></td>
+            <% if(totalPnL >= 0) { %>
+              <td class="green" style="font-weight: bold;">$<%= totalPnL %></td>
+            <% } else { %>
+              <td class="red" style="font-weight: bold;">$<%= totalPnL %></td>
+            <% } %> 
+          </tfoot>
+        </table>
+        <a class="btn btn-primary" href="/new">Add ticker</a>
+    </div>
+</body>
+</html>
